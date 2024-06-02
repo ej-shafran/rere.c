@@ -1,0 +1,2 @@
+./build/rere record test.list
+./build/rere replay test.list

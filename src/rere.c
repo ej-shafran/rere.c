@@ -71,7 +71,7 @@ bool record(char *input_path)
 	while ((read = getline(&shell, &nlen, inputf)) != -1) {
 		printf("Recording `");
 		char tmp;
-		for (int i = 0; (tmp = shell[i]) != '\n' && i < nlen; i++) {
+		for (int i = 0; (tmp = shell[i]) != '\n' && tmp != '\0'; i++) {
 			putc(tmp, stdout);
 		}
 		printf("`...\n");
@@ -91,6 +91,7 @@ bool record(char *input_path)
 		int i = 0;
 		while ((c = fgetc(f)) != EOF)
 			cmd_stdout[i++] = c;
+		cmd_stdout[i++] = '\0';
 		int exit_code = pclose(f);
 
 		bi_write_blob_field(outputf, "shell", shell);
@@ -159,8 +160,7 @@ bool replay(char *input_path)
 
 		printf("Replaying `");
 		char tmp;
-		for (int i = 0; (tmp = shell[i]) != '\n' && i < strlen(shell);
-		     i++) {
+		for (int i = 0; (tmp = shell[i]) != '\n' && tmp != '\0'; i++) {
 			putc(tmp, stdout);
 		}
 		printf("`...\n");
@@ -180,6 +180,7 @@ bool replay(char *input_path)
 		int i = 0;
 		while ((c = fgetc(f)) != EOF)
 			new_cmd_stdout[i++] = c;
+		new_cmd_stdout[i++] = '\0';
 		int new_exit_code = pclose(f);
 
 		if (strcmp(cmd_stdout, new_cmd_stdout) != 0) {

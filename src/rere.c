@@ -201,7 +201,6 @@ bool replay(char *input_path)
 		free(new_cmd_stdout);
 	}
 
-_defer:
 	fclose(output);
 	return !failed;
 }

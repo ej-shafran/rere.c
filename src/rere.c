@@ -99,8 +99,6 @@ bool record(char *input_path)
 		bi_write_blob_field(outputf, "stdout", cmd_stdout);
 
 		free(cmd_stdout);
-
-		printf("   -> OK\n");
 	}
 
 	return true;

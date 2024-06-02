@@ -3,12 +3,10 @@
 ./build/rere record test.list
 
 :i exit_code 0
-:b stdout 122
+:b stdout 104
 --Recording commands from test.list--
 Recording `echo 'hello, world'`...
-   -> OK
 Recording `echo 'foo, bar'`...
-   -> OK
 
 :b shell 30
 ./build/rere replay test.list

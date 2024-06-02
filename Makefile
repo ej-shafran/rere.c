@@ -5,3 +5,7 @@ build/rere: src/rere.c src/bi.h
 .PHONY: test
 test: build/rere test/*.list
 	./build/rere replay ./test/*.list
+
+.PHONY: record
+record: build/rere test/*.list
+	./build/rere record ./test/*.list

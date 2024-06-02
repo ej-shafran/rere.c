@@ -143,7 +143,7 @@ BI_PARSE_ERROR bi_read_int_field(BI_FILE f, BI_STRING name, BI_INT *out,
 	// :i <name> <digits>\n
 	// ~~~      ^^       ^
 	// At least 3 + prefix characters bigger than <name>
-	if (len < namelen + 3 + BI_INT_PREFIX_LEN)
+	if (len < (size_t)namelen + 3 + BI_INT_PREFIX_LEN)
 		return BI_INVALID_PREFIX;
 
 	int i = 0;
@@ -181,7 +181,7 @@ BI_PARSE_ERROR bi_read_blob_field(BI_FILE f, BI_STRING name, BI_STRING *out,
 	// :b <name> <length>\n
 	// ~~~      ^^       ^
 	// At least 3 + prefix characters bigger than <name>
-	if (len < namelen + 3 + BI_BLOB_PREFIX_LEN)
+	if (len < (size_t)namelen + 3 + BI_BLOB_PREFIX_LEN)
 		return BI_INVALID_PREFIX;
 
 	int i = 0;

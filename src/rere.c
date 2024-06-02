@@ -133,6 +133,7 @@ bool replay(char *input_path)
 		return false;
 	}
 
+	bool failed = false;
 	for (int i = 0; i < count; i++) {
 		char *shell = malloc(sizeof(char) * 2048);
 		int exit_code = 0;
@@ -169,7 +170,6 @@ bool replay(char *input_path)
 			       strerror(errno));
 
 			fclose(output);
-			free(shell);
 			return false;
 		}
 
@@ -186,11 +186,7 @@ bool replay(char *input_path)
 			printf("    EXPECTED:\n```\n%s\n```\n", cmd_stdout);
 			printf("    ACTUAL:\n```\n%s\n```\n", new_cmd_stdout);
 
-			free(shell);
-			free(cmd_stdout);
-			free(new_cmd_stdout);
-			fclose(output);
-			return false;
+			failed = true;
 		}
 
 		if (exit_code != new_exit_code) {
@@ -198,21 +194,16 @@ bool replay(char *input_path)
 			printf("    EXPECTED: `%d`\n", exit_code);
 			printf("    ACTUAL:   `%d`\n", new_exit_code);
 
-			free(shell);
-			free(cmd_stdout);
-			free(new_cmd_stdout);
-			fclose(output);
-			return false;
+			failed = true;
 		}
 
-		// free(shell);
 		free(cmd_stdout);
 		free(new_cmd_stdout);
-		// fclose(output);
 	}
 
+_defer:
 	fclose(output);
-	return true;
+	return !failed;
 }
 
 int main(int argc, char **argv)

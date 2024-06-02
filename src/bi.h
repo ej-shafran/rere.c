@@ -1,6 +1,8 @@
 #ifndef BI_H_
 #define BI_H_
 
+#include <errno.h>
+
 #ifndef BI_FILE
 #include <stdio.h>
 #define BI_FILE FILE *
@@ -34,10 +36,10 @@
 #define BI_STRLEN strlen
 #endif // BI_STRLEN
 
-#ifndef BI_ATOI
+#ifndef BI_STRTOL
 #include <stdlib.h>
-#define BI_ATOI atoi
-#endif // BI_ATOI
+#define BI_STRTOL strtol
+#endif // BI_STRTOL
 
 #ifndef BI_ASSERT
 #include <assert.h>
@@ -108,6 +110,7 @@ BI_PARSE_ERROR bi_read_blob_field(BI_FILE f, BI_STRING name, BI_STRING *out,
 #define BI_BLOB_PREFIX_LITERAL ":b "
 #define BI_BLOB_PREFIX_LEN 3
 
+#define BI_IMPLEMENTATION
 #ifdef BI_IMPLEMENTATION
 
 int bi_write_int_field(BI_FILE f, BI_STRING name, BI_INT value)
@@ -155,8 +158,10 @@ BI_PARSE_ERROR bi_read_int_field(BI_FILE f, BI_STRING name, BI_INT *out,
 	if (line[i++] != ' ')
 		return BI_INVALID_SUFFIX;
 
-	// TODO: handle `errno`? use `strtol`?
-	*out = BI_ATOI(line + i);
+	char *endp;
+	*out = BI_STRTOL(line + i, &endp, 10);
+	if (endp == line + i || *endp != '\n' || errno == ERANGE)
+		return BI_INVALID_SUFFIX;
 
 	return BI_SUCCESS;
 }
@@ -191,8 +196,10 @@ BI_PARSE_ERROR bi_read_blob_field(BI_FILE f, BI_STRING name, BI_STRING *out,
 	if (line[i++] != ' ')
 		return BI_INVALID_SUFFIX;
 
-	// TODO: handle `errno`? use `strtol`?
-	int bloblen = BI_ATOI(line + i);
+	char *endp;
+	long bloblen = BI_STRTOL(line + i, &endp, 10);
+	if (endp == line + i || *endp != '\n' || errno == ERANGE)
+		return BI_INVALID_SUFFIX;
 
 	int out_i = 0;
 	for (; out_i < bloblen; out_i++) {

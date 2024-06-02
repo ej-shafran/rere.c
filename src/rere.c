@@ -28,6 +28,7 @@ void print_bi_error(BI_PARSE_ERROR err)
 
 bool record(char *input_path)
 {
+	printf("--Recording commands from %s--\n", input_path);
 	int input_path_len = strlen(input_path);
 
 	FILE *inputf = fopen(input_path, "rb");
@@ -106,6 +107,8 @@ bool record(char *input_path)
 
 bool replay(char *input_path)
 {
+	printf("--Replaying commands from %s--\n", input_path);
+
 	int input_path_len = strlen(input_path);
 
 	char *output_path = malloc(sizeof(char) * (input_path_len + 3));
@@ -216,7 +219,7 @@ bool replay(char *input_path)
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
-		printf("Usage: %s [record|replay] <file>\n", argv[0]);
+		printf("Usage: %s [record|replay] <files..>\n", argv[0]);
 		printf("ERROR: missing required argument [record|replay]\n");
 		return 1;
 	}
@@ -224,23 +227,25 @@ int main(int argc, char **argv)
 	char *subcommand = argv[1];
 
 	if (strcmp(subcommand, "record") != 0 && strcmp(subcommand, "replay")) {
-		printf("Usage: %s [record|replay] <file>\n", argv[0]);
+		printf("Usage: %s [record|replay] <files..>\n", argv[0]);
 		printf("ERROR: invalid subcommand '%s'\n", subcommand);
 		return 1;
 	}
 
 	if (argc < 3) {
-		printf("Usage: %s [record|replay] <file>\n", argv[0]);
+		printf("Usage: %s [record|replay] <files..>\n", argv[0]);
 		printf("ERROR: missing required argument <file>\n");
 		return 1;
 	}
 
-	if (subcommand[2] == 'c') { // Record
-		if (!record(argv[2]))
-			return 1;
-	} else { // Replay
-		if (!replay(argv[2]))
-			return 1;
+	for (int i = 2; i < argc; i++) {
+		if (subcommand[2] == 'c') { // Record
+			if (!record(argv[i]))
+				return 1;
+		} else { // Replay
+			if (!replay(argv[i]))
+				return 1;
+		}
 	}
 
 	return 0;

@@ -1,0 +1,4 @@
+./build/rere
+./build/rere other
+./build/rere record
+./build/rere record nonexistent.list
